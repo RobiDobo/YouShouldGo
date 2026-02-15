@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tram 7 Live Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style> #map { height: 600px; width: 100%; } </style>
+</head>
+<body>
+<div id="map"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    // centre on Timișoara
+    var map = L.map('map').setView([45.7537, 21.2257], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    var markers = {}; // tram markers
+
+    async function updateTrams() {
+        const response = await fetch('/api/vehicles');
+        const trams = await response.json();
+
+        trams.forEach(tram => {
+            if (markers[tram.id]) {
+                // move it
+                markers[tram.id].setLatLng([tram.latitude, tram.longitude]);
+            } else {
+                // create a new marker
+                markers[tram.id] = L.marker([tram.latitude, tram.longitude])
+                    .addTo(map)
+                    .bindPopup(`Tram: ${tram.label} <br> Speed: ${tram.speed} m/s`);
+            }
+        });
+    }
+
+    // Refresh 15 secunde
+    setInterval(updateTrams, 15000);
+    updateTrams();
+</script>
+</body>
+</html>
