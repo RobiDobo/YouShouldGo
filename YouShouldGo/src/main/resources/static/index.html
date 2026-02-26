@@ -1,40 +1,70 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Tram 7 Live Map</title>
+    <title>YouShouldGo - Transit Tracker</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <style> #map { height: 600px; width: 100%; } </style>
+    <link rel="stylesheet" href="styles.css"/>
+
 </head>
 <body>
-<div id="map"></div>
+<div class="container">
+    <div class="setup-panel">
+        <h2> Transit Tracker Setup</h2>
+        <p style="background: #fff3cd; padding: 10px; border-radius: 4px; border-left: 4px solid #ffc107; margin-bottom: 15px;">
+            <strong>Note:</strong> Sorry, my API key is only available for Cluj transit agency.
+        </p>
+        
+        <div style="background: #f8f9fa; padding: 10px; border-radius: 4px; border: 1px solid #e5e7eb; margin-bottom: 15px;">
+            <strong>Message sent to microcontroller:</strong>
+            <span id="statusMessage">(waiting for status...)</span>
+        </div>
+        
+        <div class="grid">
+            <div class="step">
+                <label for="agencySelect">1. Select Transit Agency</label>
+                <select id="agencySelect">
+                    <option value="">Loading agencies...</option>
+                </select>
+            </div>
+            
+            <div class="step">
+                <label for="routeSelect">2. Select Route</label>
+                <select id="routeSelect" disabled>
+                    <option value="">First select an agency</option>
+                </select>
+            </div>
+            
+            <div class="step">
+                <label for="tripSelect">3. Select Direction</label>
+                <select id="tripSelect" disabled>
+                    <option value="">First select a route</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="directionInfo" class="status info" style="display: none;"></div>
+        
+        <button id="startTracking" class="btn btn-primary" disabled>Start Tracking</button>
+        
+        <div id="status" class="status"></div>
+    </div>
+    
+    <div class="map-container">
+        <div id="map"></div>
+        <div class="station-list">
+            <h3>Stations</h3>
+            <ul id="stationListItems">
+                <li style="text-align: center; color: #999; padding: 20px;">Select a trip to view stations</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-    // centre on Timișoara
-    var map = L.map('map').setView([45.7537, 21.2257], 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-    var markers = {}; // tram markers
-
-    async function updateTrams() {
-        const response = await fetch('/api/vehicles');
-        const trams = await response.json();
-
-        trams.forEach(tram => {
-            if (markers[tram.id]) {
-                // move it
-                markers[tram.id].setLatLng([tram.latitude, tram.longitude]);
-            } else {
-                // create a new marker
-                markers[tram.id] = L.marker([tram.latitude, tram.longitude])
-                    .addTo(map)
-                    .bindPopup(`Tram: ${tram.label} <br> Speed: ${tram.speed} m/s`);
-            }
-        });
-    }
-
-    // Refresh 15 secunde
-    setInterval(updateTrams, 15000);
-    updateTrams();
-</script>
+<script src="config.js"></script>
+<script src="api.js"></script>
+<script src="map.js"></script>
+<script src="ui.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
