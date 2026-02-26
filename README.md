@@ -1,4 +1,4 @@
-# YouShouldGo (Based on Tranzy's API)
+# YouShouldGo - Transit Tracker (Based on Tranzy's API)
 Java Spring Boot app to allow a user to know when to leave, to catch his bus, with IoT integration (you can select which station to track from the micrcontroller!)
 I recommend using the Platform.io Visual Studio extension to manage the libraries and flashing the microcontroller. Tested on t-display-s3 esp32 development board.
 
